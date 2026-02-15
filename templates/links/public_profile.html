@@ -5,187 +5,127 @@
 {% block extra_css %}
 <style>
     :root {
-
-        /* Override primary color with user's choice (com fallback) */
+        /* Pega a cor do Django ou usa o roxo padrão se estiver vazio */
         --user-primary: {{ profile.primary_color|default:'#6C5CE7' }};
     }
 
+    /* Fundo limpo e sólido */
     body {
-        background: radial-gradient(circle at top, var(--user-primary) 0%, hsl(var(--background)) 100%);
-        background-attachment: fixed;
+        background-color: hsl(var(--background)) !important;
+        background-image: none !important;
+        background-attachment: scroll;
     }
 
-    /* Dark theme adjustments for better contrast */
-    [data-theme="dark"] body {
-        background: radial-gradient(circle at top,
-                color-mix(in srgb, var(--user-primary) 20%, hsl(var(--background))) 0%,
-                hsl(var(--background)) 100%);
-    }
-
-    .navbar {
-        border-bottom: 1px solid hsl(var(--border) / 0.3);
-        background: hsla(var(--background), 0.8);
-        backdrop-filter: blur(12px);
-    }
-
-    .navbar .logo {
-        color: hsl(var(--foreground));
-        opacity: 1;
-    }
-
-    .container {
+    /* Ajuste para o container de perfil */
+    .profile-container {
+        text-align: center;
         max-width: 600px;
+        margin: 4rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Avatar usando a cor de destaque no fundo */
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
+        font-size: 2.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        background-color: var(--user-primary) !important;
+        color: white !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     .profile-username {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
         color: hsl(var(--foreground));
-        font-size: 1.75rem;
-        font-weight: 800;
-        margin-bottom: 0.25rem;
-        letter-spacing: -0.05em;
     }
 
     .profile-tagline {
         color: hsl(var(--muted-foreground));
-        font-size: 0.95rem;
-        margin-bottom: 3rem;
-        font-weight: 500;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Cards de Links - Clean Style */
+    .public-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 
     .public-link-card {
-        background: hsl(var(--card));
-        color: hsl(var(--foreground));
-        border: 2px solid hsl(var(--border));
-        border-radius: calc(var(--radius) * 2);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         gap: 1rem;
-        padding: 1.25rem 1.5rem;
-        position: relative;
-        overflow: hidden;
+        padding: 1.25rem;
+        background-color: hsl(var(--card));
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius);
         text-decoration: none;
-        min-height: 70px;
-    }
-
-    .public-link-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, var(--user-primary), transparent);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: 0;
-    }
-
-    .public-link-card:hover::before {
-        opacity: 0.15;
+        color: inherit;
+        transition: all 0.2s ease;
+        /* O detalhe da cor escolhida aqui */
+        border-left: 5px solid var(--user-primary) !important;
     }
 
     .public-link-card:hover {
-        border-color: var(--user-primary);
-        transform: translateY(-2px);
-        box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--user-primary);
+        transform: translateY(-3px);
+        background-color: hsl(var(--accent));
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     }
 
-    .public-link-card .icon-wrapper {
-        flex-shrink: 0;
-        width: 42px;
-        height: 42px;
+    /* Ícones usando a cor de destaque */
+    .icon-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: hsl(var(--muted));
-        border-radius: calc(var(--radius) * 1.5);
-        color: hsl(var(--muted-foreground));
-        transition: all 0.3s ease;
-        z-index: 1;
-    }
-
-    .public-link-card:hover .icon-wrapper {
-        background: var(--user-primary);
-        color: #ffffff;
-        transform: scale(1.1);
-    }
-
-    .public-link-card .link-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        z-index: 1;
-    }
-
-    .public-link-card .link-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: hsl(var(--foreground));
-        transition: color 0.3s ease;
-    }
-
-    .public-link-card:hover .link-title {
+        min-width: 40px;
         color: var(--user-primary);
     }
 
-    .public-link-card .link-description {
+    .link-content {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .link-title {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .link-description {
         font-size: 0.875rem;
         color: hsl(var(--muted-foreground));
-        line-height: 1.4;
     }
 
-    .profile-avatar {
-        background: var(--user-primary);
-        color: #ffffff;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    .footer-branding {
-        margin-top: 6rem;
-        padding-bottom: 4rem;
-        text-align: center;
-    }
-
-    .footer-branding a {
-        text-decoration: none;
-        font-weight: 800;
-        color: hsl(var(--foreground));
-        font-size: 0.875rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-    }
-
-    .footer-branding a:hover {
-        opacity: 1;
-    }
-
-    .footer-branding .brand-name {
-        letter-spacing: -0.05em;
-        font-size: 1.25rem;
-        font-weight: 900;
-        color: hsl(var(--foreground));
+    /* Ajuste fino para o Modo Escuro */
+    [data-theme="dark"] .public-link-card {
+        background-color: hsl(var(--card));
+        border-color: hsl(var(--border));
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="profile-container" style="margin-top: 2rem;">
-    <div class="profile-avatar" style="width: 110px; height: 110px; font-size: 2.5rem;">
+<div class="profile-container">
+    <div class="profile-avatar">
         {{ profile_user.username|slice:":1"|upper }}
     </div>
+
     <h1 class="profile-username">@{{ profile_user.username }}</h1>
-    <p class="profile-tagline">Digital Presence</p>
+    <p class="profile-tagline">Link in Bio</p>
 
     <div class="public-links">
         {% for link in links %}
         <a href="{{ link.url }}" target="_blank" class="public-link-card">
             <div class="icon-wrapper">
-                <i data-lucide="{{ link.icon_name }}" style="width: 22px; height: 22px;"></i>
+                <i data-lucide="{{ link.icon_name|default:'link' }}" style="width: 24px; height: 24px;"></i>
             </div>
             <div class="link-content">
                 <span class="link-title">{{ link.title }}</span>
@@ -195,17 +135,19 @@
             </div>
         </a>
         {% empty %}
-        <div class="card" style="border-style: dashed; background: rgba(255,255,255,0.1); backdrop-filter: blur(4px);">
-            <p style="color: hsl(var(--muted-foreground));">Nenhum link público disponível.</p>
+        <div class="card" style="border-style: dashed; text-align: center; padding: 2rem;">
+            <p style="color: hsl(var(--muted-foreground));">Nenhum link disponível no momento.</p>
         </div>
         {% endfor %}
     </div>
-
-    <div class="footer-branding">
-        <a href="{% url 'home' %}">
-            <span>Criado com</span>
-            <span class="brand-name">Liiink</span>
-        </a>
-    </div>
 </div>
+
+<script>
+    // Inicializa os ícones do Lucide
+    lucide.createIcons();
+
+    // Garante que o tema salvo seja aplicado
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+</script>
 {% endblock %}

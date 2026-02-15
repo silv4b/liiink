@@ -349,3 +349,61 @@ body {
         transform: scale(1);
     }
 }
+
+/* Custom Dropdown (Basecoat UI Style) */
+.custom-select-container {
+    position: relative;
+    width: 100%;
+}
+
+/* O Menu deve começar escondido e sair do fluxo do documento */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    /* Logo abaixo do botão */
+    left: 0;
+    width: 100%;
+    background-color: hsl(var(--popover));
+    color: hsl(var(--popover-foreground));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    /* ESCONDE POR PADRÃO */
+    padding: 4px;
+    margin-top: 4px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+/* Esta classe será adicionada via JS para mostrar o menu */
+.dropdown-menu.show {
+    display: block !important;
+    /* FORÇA A APARECER */
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-radius: calc(var(--radius) - 2px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropdown-item:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+}
+
+.dropdown-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    background-color: hsl(var(--background));
+    /* Garante fundo sólido */
+}

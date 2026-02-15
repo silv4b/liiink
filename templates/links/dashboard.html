@@ -10,7 +10,6 @@
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;">
     <div>
-        <!-- Personalização -->
         <div class="card" style="margin-bottom: 2rem;">
             <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                 <i data-lucide="palette" style="width: 20px;"></i> Personalização
@@ -31,7 +30,6 @@
             </form>
         </div>
 
-        <!-- Adicionar Link -->
         <div class="card">
             <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                 <i data-lucide="plus-circle" style="width: 20px;"></i> Adicionar Novo Link
@@ -40,9 +38,8 @@
                 {% csrf_token %}
                 <input type="hidden" name="action" value="add_link">
                 <div class="form-group">
-                    <label class="form-label" for="title">Título do Link</label>
-                    <input type="text" name="title" id="title" class="form-control" placeholder="Ex: Meu Instagram"
-                        required>
+                    <label class="form-label">Título do Link</label>
+                    <input type="text" name="title" class="form-control" placeholder="Ex: Meu Instagram" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="description">Descrição (podes deixar vago)</label>
@@ -50,42 +47,47 @@
                         placeholder="Ex: Siga-me para mais novidades">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="url">URL</label>
-                    <input type="url" name="url" id="url" class="form-control" placeholder="https://..." required>
+                    <label class="form-label">URL</label>
+                    <input type="url" name="url" class="form-control" placeholder="https://..." required>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Ícone (Nome do Lucide)</label>
-                    <!-- Use ícones disponíveis em https://lucide.dev/icons/ -->
-                    <select name="icon_name" class="form-control">
-                        <option value="link">link (padrão)</option>
-                        <option value="instagram">instagram</option>
-                        <option value="github">github</option>
-                        <option value="twitter">twitter</option>
-                        <option value="linkedin">linkedin</option>
-                        <option value="facebook">facebook</option>
-                        <option value="youtube">youtube</option>
-                        <option value="mail">mail</option>
-                        <option value="globe">globe</option>
-                        <option value="message-circle">message-circle</option>
-                        <option value="phone">phone</option>
-                    </select>
-                    <p style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); margin-top: 0.25rem;">
-                        Veja todos os nomes em <a href="https://lucide.dev/icons/" target="_blank"
-                            style="color: inherit;">lucide.dev</a>
-                    </p>
+                    <label class="form-label">Ícone</label>
+                    <div class="custom-select-container">
+                        <input type="hidden" name="icon_name" id="input-add" value="link">
+                        <div class="form-control dropdown-trigger" onclick="toggleDropdown('menu-add')">
+                            <span id="label-add">link (padrão)</span>
+                            <i data-lucide="chevron-down" style="width: 16px;"></i>
+                        </div>
+                        <div class="dropdown-menu" id="menu-add">
+                            <div class="dropdown-item" onclick="selectOption('add', 'link')"><i data-lucide="link"
+                                    style="width:14px"></i> link</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'instagram')"><i
+                                    data-lucide="instagram" style="width:14px"></i> instagram</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'github')"><i data-lucide="github"
+                                    style="width:14px"></i> github</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'twitter')"><i data-lucide="twitter"
+                                    style="width:14px"></i> twitter</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'linkedin')"><i
+                                    data-lucide="linkedin" style="width:14px"></i> linkedin</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'facebook')"><i
+                                    data-lucide="facebook" style="width:14px"></i> facebook</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'youtube')"><i data-lucide="youtube"
+                                    style="width:14px"></i> youtube</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'mail')"><i data-lucide="mail"
+                                    style="width:14px"></i> mail</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'globe')"><i data-lucide="globe"
+                                    style="width:14px"></i> globe</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'message-circle')"><i
+                                    data-lucide="message-circle" style="width:14px"></i> message-circle</div>
+                            <div class="dropdown-item" onclick="selectOption('add', 'phone')"><i data-lucide="phone"
+                                    style="width:14px"></i> phone</div>
+                        </div>
+                    </div>
                 </div>
+
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Adicionar Link</button>
             </form>
-            <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.875rem; color: hsl(var(--muted-foreground));">Limite de links</span>
-                <span style="font-size: 0.875rem; font-weight: 600;">{{ links|length }} / 6</span>
-            </div>
-            <div
-                style="width: 100%; height: 6px; background: hsl(var(--secondary)); border-radius: 3px; margin-top: 0.5rem;">
-                <div
-                    style="width: calc(({{ links|length }} / 6) * 100%); height: 100%; background: hsl(var(--primary)); border-radius: 3px; transition: width 0.3s ease;">
-                </div>
-            </div>
         </div>
     </div>
 
@@ -112,59 +114,70 @@
                         onclick="openEditModal({{ link.id }}, '{{ link.title|escapejs }}', '{{ link.url|escapejs }}', '{{ link.description|escapejs }}', '{{ link.icon_name }}')">
                         <i data-lucide="pencil" style="width: 18px;"></i>
                     </button>
-                    <button type="button" class="btn btn-ghost" style="color: hsl(var(--destructive)); padding: 0.5rem;"
-                        onclick="confirmDelete('{% url 'delete_link' link.id %}')">
+                    <button type="button" class="btn btn-ghost" style="padding: 0.5rem; color: hsl(var(--destructive));"
+                        onclick="confirmDelete('/delete/{{ link.id }}/')">
                         <i data-lucide="trash-2" style="width: 18px;"></i>
                     </button>
                 </div>
-            </div>
-            {% empty %}
-            <div class="card" style="text-align: center; border-style: dashed; background: transparent; padding: 3rem;">
-                <i data-lucide="link-2"
-                    style="width: 40px; height: 40px; margin-bottom: 1rem; color: hsl(var(--muted-foreground)); opacity: 0.5;"></i>
-                <p style="color: hsl(var(--muted-foreground));">Você ainda não adicionou nenhum link.</p>
             </div>
             {% endfor %}
         </div>
     </div>
 </div>
 
-<!-- Edit Link Modal -->
 <div id="edit-modal-overlay" class="modal-overlay" style="display: none;">
     <div class="modal-content card" style="max-width: 500px;">
-        <h3 id="edit-modal-title" style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-            <i data-lucide="pencil" style="width: 20px;"></i> Editar Link
-        </h3>
-        <form id="edit-link-form" method="post" action="">
+        <h3 style="margin-bottom: 1.5rem;"><i data-lucide="pencil" style="width: 20px;"></i> Editar Link</h3>
+        <form id="edit-link-form" method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label class="form-label" for="edit-title">Título do Link</label>
+                <label class="form-label">Título</label>
                 <input type="text" name="title" id="edit-title" class="form-control" required>
             </div>
             <div class="form-group">
-                <label class="form-label" for="edit-description">Descrição (opcional)</label>
+                <label class="form-label">Descrição</label>
                 <input type="text" name="description" id="edit-description" class="form-control">
             </div>
             <div class="form-group">
-                <label class="form-label" for="edit-url">URL</label>
+                <label class="form-label">URL</label>
                 <input type="url" name="url" id="edit-url" class="form-control" required>
             </div>
+
             <div class="form-group">
-                <label class="form-label" for="edit-icon">Ícone (Nome do Lucide)</label>
-                <select name="icon_name" id="edit-icon" class="form-control">
-                    <option value="link">link (padrão)</option>
-                    <option value="instagram">instagram</option>
-                    <option value="github">github</option>
-                    <option value="twitter">twitter</option>
-                    <option value="linkedin">linkedin</option>
-                    <option value="facebook">facebook</option>
-                    <option value="youtube">youtube</option>
-                    <option value="mail">mail</option>
-                    <option value="globe">globe</option>
-                    <option value="message-circle">message-circle</option>
-                    <option value="phone">phone</option>
-                </select>
+                <label class="form-label">Ícone</label>
+                <div class="custom-select-container">
+                    <input type="hidden" name="icon_name" id="input-edit">
+                    <div class="form-control dropdown-trigger" onclick="toggleDropdown('menu-edit')">
+                        <span id="label-edit">Selecionar...</span>
+                        <i data-lucide="chevron-down" style="width: 16px;"></i>
+                    </div>
+                    <div class="dropdown-menu" id="menu-edit">
+                        <div class="dropdown-item" onclick="selectOption('edit', 'link')"><i data-lucide="link"
+                                style="width:14px"></i> link</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'instagram')"><i
+                                data-lucide="instagram" style="width:14px"></i> instagram</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'github')"><i data-lucide="github"
+                                style="width:14px"></i> github</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'twitter')"><i data-lucide="twitter"
+                                style="width:14px"></i> twitter</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'linkedin')"><i data-lucide="linkedin"
+                                style="width:14px"></i> linkedin</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'facebook')"><i data-lucide="facebook"
+                                style="width:14px"></i> facebook</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'youtube')"><i data-lucide="youtube"
+                                style="width:14px"></i> youtube</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'mail')"><i data-lucide="mail"
+                                style="width:14px"></i> mail</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'globe')"><i data-lucide="globe"
+                                style="width:14px"></i> globe</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'message-circle')"><i
+                                data-lucide="message-circle" style="width:14px"></i> message-circle</div>
+                        <div class="dropdown-item" onclick="selectOption('edit', 'phone')"><i data-lucide="phone"
+                                style="width:14px"></i> phone</div>
+                    </div>
+                </div>
             </div>
+
             <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
                 <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Salvar Alterações</button>
@@ -174,35 +187,40 @@
 </div>
 
 <script>
-    const editModalOverlay = document.getElementById('edit-modal-overlay');
-    const editLinkForm = document.getElementById('edit-link-form');
-    const editTitle = document.getElementById('edit-title');
-    const editDescription = document.getElementById('edit-description');
-    const editUrl = document.getElementById('edit-url');
-    const editIcon = document.getElementById('edit-icon');
+    function toggleDropdown(id) {
+        const menu = document.getElementById(id);
+        const isVisible = menu.classList.contains('show');
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+        if (!isVisible) menu.classList.add('show');
+    }
+
+    function selectOption(type, value) {
+        document.getElementById(`input-${type}`).value = value;
+        document.getElementById(`label-${type}`).innerText = value;
+        document.getElementById(`menu-${type}`).classList.remove('show');
+    }
 
     function openEditModal(linkId, title, url, description, iconName) {
-        editTitle.value = title;
-        editDescription.value = description || '';
-        editUrl.value = url;
-        editIcon.value = iconName;
-
-        editLinkForm.action = `/edit/${linkId}/`;
-        editModalOverlay.style.display = 'flex';
-
-        // Reinitialize Lucide icons for the modal
+        document.getElementById('edit-title').value = title;
+        document.getElementById('edit-url').value = url;
+        const cleanDesc = (description === 'None' || !description) ? '' : description;
+        document.getElementById('edit-description').value = cleanDesc;
+        document.getElementById('input-edit').value = iconName;
+        document.getElementById('label-edit').innerText = iconName;
+        document.getElementById('edit-link-form').action = `/edit/${linkId}/`;
+        document.getElementById('edit-modal-overlay').style.display = 'flex';
         lucide.createIcons();
     }
 
     function closeEditModal() {
-        editModalOverlay.style.display = 'none';
+        document.getElementById('edit-modal-overlay').style.display = 'none';
     }
 
-    // Close modal on overlay click
-    editModalOverlay.addEventListener('click', (e) => {
-        if (e.target === editModalOverlay) {
-            closeEditModal();
+    window.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-select-container')) {
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
         }
+        if (e.target.id === 'edit-modal-overlay') closeEditModal();
     });
 </script>
 {% endblock %}
