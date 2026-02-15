@@ -105,3 +105,46 @@ Este projeto utiliza o padrão de **Conventional Commits** para organizar o hist
 | **test** | Adição ou correção de testes. |
 | **build** | Mudanças que afetam o sistema de build ou dependências externas. |
 | **chore** | Tarefas triviais de manutenção que não mexem no código ou testes. |
+
+## Sobre o uv + poethepoet no Windows
+
+Com o `uv` e o `poethepoet`, para usar comandos facilmente, basta usar `uv run poe <comando_qualquer>`, para comprimir esse comando (considerando a correta configuração do `pyproject.toml`) em apenas `uv`, cole o bloco a seguir no seu profile do Windows Powershell, para isso:
+
+1. No seu windows powershell, execute: `code $profile`.
+
+2. Copie e cole o bloco a seguir:
+
+    ```powershell
+    function uv {
+        $uvBuiltins = @('add', 'remove', 'sync', 'lock', 'init', 'venv', 'python', 'run', 'tool', 'self', 'help', 'pip')
+
+        if ($args.Count -gt 0 -and $args[0] -notin $uvBuiltins) {
+            # Se digitou algo que não é comando nativo do uv, assume que é um comando do Poe.
+            & (Get-Command uv -CommandType Application).Source run poe @args
+        }
+        else {
+            # Comandos nativos do uv passam direto
+            & (Get-Command uv -CommandType Application).Source @args
+        }
+    }
+    ```
+
+3. Execute: `. $profile` (equivalente ao `sourche .bashrc` ou `source .zshrc` do linux).
+
+4. Teste: `uv dev` para iniciar o servidor django e projeto.
+    Deve aparecer algo como:
+
+    ```bash
+    PS: D:/caminho/do/projeto> uv dev
+    Poe => python manage.py runserver
+    Watching for file changes with WatchfilesReloader
+    Performing system checks...
+
+    System check identified no issues (0 silenced).
+    February 15, 2026 - 13:19:50
+    Django version 6.0.2, using settings 'core.settings'
+    Starting development server at http://127.0.0.1:8000/
+    Quit the server with CTRL-BREAK.
+
+    ...
+    ```
