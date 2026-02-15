@@ -82,6 +82,7 @@ body {
 .navbar .container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
 }
 
@@ -103,7 +104,7 @@ body {
 .nav-links button {
     font-size: 0.875rem;
     font-weight: 500;
-    color: hsl(var(--muted-foreground));
+    color: hsl(var(--user-primary));
     text-decoration: none;
     transition: color 0.2s;
 }
