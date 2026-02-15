@@ -30,6 +30,7 @@ pytest = { shell = "pytest" }
 coverage = { shell = "coverage run -m pytest" }
 report = { shell = "coverage report" }
 coveragehtml = { shell = "coverage html" }
+update = { shell = "uv sync && uv lock && uv pip freeze > requirements.txt"}
 
 [tool.poe.tasks.server]
 sequence = ["runserver"]
