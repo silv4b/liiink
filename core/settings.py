@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    # Hot Reload
+    "django_browser_reload",  # Django Browser Reload: https://github.com/adamchainz/django-browser-reload
+    "django_watchfiles",  # Django Watchfiles: https://github.com/adamchainz/django-watchfiles
     # Local
     "links",
 ]
@@ -59,6 +62,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    # Hot Reload
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
