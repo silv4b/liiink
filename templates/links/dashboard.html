@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Liiink{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1 style="font-size: 2.25rem; font-weight: 700; letter-spacing: -0.025em;">Administração</h1>
+    <p style="color: hsl(var(--muted-foreground));">Gerencie seus links e estilo do perfil.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;">
+    <div>
+        <!-- Personalização -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="palette" style="width: 20px;"></i> Personalização
+            </h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+                <div class="form-group">
+                    <label class="form-label">Cor Primária do Perfil</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="color" name="primary_color" value="{{ profile.primary_color }}"
+                            class="form-control" style="width: 60px; padding: 2px; height: 3rem;">
+                        <input type="text" value="{{ profile.primary_color }}" class="form-control" readonly
+                            style="font-family: monospace;">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Salvar Cor</button>
+            </form>
+        </div>
+
+        <!-- Adicionar Link -->
+        <div class="card">
+            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="plus-circle" style="width: 20px;"></i> Adicionar Novo Link
+            </h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_link">
+                <div class="form-group">
+                    <label class="form-label" for="title">Título do Link</label>
+                    <input type="text" name="title" id="title" class="form-control" placeholder="Ex: Meu Instagram"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="description">Descrição (podes deixar vago)</label>
+                    <input type="text" name="description" id="description" class="form-control"
+                        placeholder="Ex: Siga-me para mais novidades">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="url">URL</label>
+                    <input type="url" name="url" id="url" class="form-control" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ícone (Nome do Lucide)</label>
+                    <!-- Use ícones disponíveis em https://lucide.dev/icons/ -->
+                    <select name="icon_name" class="form-control">
+                        <option value="link">link (padrão)</option>
+                        <option value="instagram">instagram</option>
+                        <option value="github">github</option>
+                        <option value="twitter">twitter</option>
+                        <option value="linkedin">linkedin</option>
+                        <option value="facebook">facebook</option>
+                        <option value="youtube">youtube</option>
+                        <option value="mail">mail</option>
+                        <option value="globe">globe</option>
+                        <option value="message-circle">message-circle</option>
+                        <option value="phone">phone</option>
+                    </select>
+                    <p style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); margin-top: 0.25rem;">
+                        Veja todos os nomes em <a href="https://lucide.dev/icons/" target="_blank"
+                            style="color: inherit;">lucide.dev</a>
+                    </p>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Adicionar Link</button>
+            </form>
+            <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.875rem; color: hsl(var(--muted-foreground));">Limite de links</span>
+                <span style="font-size: 0.875rem; font-weight: 600;">{{ links|length }} / 6</span>
+            </div>
+            <div
+                style="width: 100%; height: 6px; background: hsl(var(--secondary)); border-radius: 3px; margin-top: 0.5rem;">
+                <div
+                    style="width: calc(({{ links|length }} / 6) * 100%); height: 100%; background: hsl(var(--primary)); border-radius: 3px; transition: width 0.3s ease;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h3 style="margin-bottom: 1.5rem;">Seus Links Atuais</h3>
+        <div class="link-list">
+            {% for link in links %}
+            <div class="link-item">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="background: hsl(var(--secondary)); padding: 0.75rem; border-radius: 8px;">
+                        <i data-lucide="{{ link.icon_name }}" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div>
+                        <div class="link-title">{{ link.title }}</div>
+                        {% if link.description %}
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">{{ link.description }}
+                        </div>
+                        {% endif %}
+                        <div class="link-url">{{ link.url }}</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="btn btn-ghost" style="padding: 0.5rem;"
+                        onclick="openEditModal({{ link.id }}, '{{ link.title|escapejs }}', '{{ link.url|escapejs }}', '{{ link.description|escapejs }}', '{{ link.icon_name }}')">
+                        <i data-lucide="pencil" style="width: 18px;"></i>
+                    </button>
+                    <button type="button" class="btn btn-ghost" style="color: hsl(var(--destructive)); padding: 0.5rem;"
+                        onclick="confirmDelete('{% url 'delete_link' link.id %}')">
+                        <i data-lucide="trash-2" style="width: 18px;"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="card" style="text-align: center; border-style: dashed; background: transparent; padding: 3rem;">
+                <i data-lucide="link-2"
+                    style="width: 40px; height: 40px; margin-bottom: 1rem; color: hsl(var(--muted-foreground)); opacity: 0.5;"></i>
+                <p style="color: hsl(var(--muted-foreground));">Você ainda não adicionou nenhum link.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Edit Link Modal -->
+<div id="edit-modal-overlay" class="modal-overlay" style="display: none;">
+    <div class="modal-content card" style="max-width: 500px;">
+        <h3 id="edit-modal-title" style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="pencil" style="width: 20px;"></i> Editar Link
+        </h3>
+        <form id="edit-link-form" method="post" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="edit-title">Título do Link</label>
+                <input type="text" name="title" id="edit-title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="edit-description">Descrição (opcional)</label>
+                <input type="text" name="description" id="edit-description" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="edit-url">URL</label>
+                <input type="url" name="url" id="edit-url" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="edit-icon">Ícone (Nome do Lucide)</label>
+                <select name="icon_name" id="edit-icon" class="form-control">
+                    <option value="link">link (padrão)</option>
+                    <option value="instagram">instagram</option>
+                    <option value="github">github</option>
+                    <option value="twitter">twitter</option>
+                    <option value="linkedin">linkedin</option>
+                    <option value="facebook">facebook</option>
+                    <option value="youtube">youtube</option>
+                    <option value="mail">mail</option>
+                    <option value="globe">globe</option>
+                    <option value="message-circle">message-circle</option>
+                    <option value="phone">phone</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const editModalOverlay = document.getElementById('edit-modal-overlay');
+    const editLinkForm = document.getElementById('edit-link-form');
+    const editTitle = document.getElementById('edit-title');
+    const editDescription = document.getElementById('edit-description');
+    const editUrl = document.getElementById('edit-url');
+    const editIcon = document.getElementById('edit-icon');
+
+    function openEditModal(linkId, title, url, description, iconName) {
+        editTitle.value = title;
+        editDescription.value = description || '';
+        editUrl.value = url;
+        editIcon.value = iconName;
+
+        editLinkForm.action = `/edit/${linkId}/`;
+        editModalOverlay.style.display = 'flex';
+
+        // Reinitialize Lucide icons for the modal
+        lucide.createIcons();
+    }
+
+    function closeEditModal() {
+        editModalOverlay.style.display = 'none';
+    }
+
+    // Close modal on overlay click
+    editModalOverlay.addEventListener('click', (e) => {
+        if (e.target === editModalOverlay) {
+            closeEditModal();
+        }
+    });
+</script>
+{% endblock %}

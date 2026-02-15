@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar Conta - Liiink{% endblock %}
+
+{% block content %}
+<div style="max-width: 450px; margin: 2rem auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h1 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em;">Crie sua conta</h1>
+            <p style="color: hsl(var(--muted-foreground)); font-size: 0.875rem;">Comece seu cartão de visitas online
+                hoje.</p>
+        </div>
+
+        <form method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-error">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <div>{{ error }}</div>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label" for="id_username">Nome de Usuário</label>
+                <input type="text" name="username" id="id_username" class="form-control" required
+                    placeholder="ex: joaosilva" value="{{ form.username.value|default:'' }}">
+                <p style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); margin-top: 0.25rem;">Este será o seu
+                    link: liiink.com/<b>usuario</b></p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_email">E-mail</label>
+                <input type="email" name="email" id="id_email" class="form-control" required placeholder="seu@email.com"
+                    value="{{ form.email.value|default:'' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_password1">Senha</label>
+                <input type="password" name="password1" id="id_password1" class="form-control" required
+                    placeholder="Mínimo 8 caracteres" onkeyup="checkStrength(this.value)">
+
+                <div id="strength-meter"
+                    style="height: 4px; border-radius: 2px; background: hsl(var(--secondary)); margin-top: 8px; overflow: hidden;">
+                    <div id="strength-bar"
+                        style="height: 100%; width: 0%; border-radius: 2px; transition: width 0.3s, background 0.3s;">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                    <small id="strength-text" style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Força da
+                        senha</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_password2">Confirme a Senha</label>
+                <input type="password" name="password2" id="id_password2" class="form-control" required
+                    placeholder="Digite novamente">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; height: 3rem; margin-top: 1rem;">Criar
+                Conta Grátis</button>
+        </form>
+
+        <p style="text-align: center; margin-top: 2rem; font-size: 0.875rem; color: hsl(var(--muted-foreground));">
+            Já tem uma conta? <a href="{% url 'account_login' %}"
+                style="color: hsl(var(--foreground)); font-weight: 600; text-decoration: none;">Entre aqui</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function checkStrength(password) {
+        let strength = 0;
+        let bar = document.getElementById('strength-bar');
+        let text = document.getElementById('strength-text');
+
+        if (password.length > 7) strength += 25;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 25;
+        if (password.match(/[0-9]/)) strength += 25;
+        if (password.match(/[^a-zA-Z0-9]/)) strength += 25;
+
+        bar.style.width = strength + '%';
+
+        if (strength === 0) {
+            bar.style.background = 'hsl(var(--secondary))';
+            text.innerText = 'Força da senha';
+        } else if (strength <= 25) {
+            bar.style.background = 'hsl(0 84.2% 60.2%)';
+            text.innerText = 'Muito fraca';
+        } else if (strength <= 50) {
+            bar.style.background = 'hsl(38 92% 50%)';
+            text.innerText = 'Fraca';
+        } else if (strength <= 75) {
+            bar.style.background = 'hsl(221.2 83.2% 53.3%)';
+            text.innerText = 'Boa';
+        } else {
+            bar.style.background = 'hsl(142.1 76.2% 36.3%)';
+            text.innerText = 'Exclente';
+        }
+    }
+</script>
+{% endblock %}

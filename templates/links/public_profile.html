@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }} - Liiink{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+
+        /* Override primary color with user's choice (com fallback) */
+        --user-primary: {{ profile.primary_color|default:'#6C5CE7' }};
+    }
+
+    body {
+        background: radial-gradient(circle at top, var(--user-primary) 0%, hsl(var(--background)) 100%);
+        background-attachment: fixed;
+    }
+
+    /* Dark theme adjustments for better contrast */
+    [data-theme="dark"] body {
+        background: radial-gradient(circle at top,
+                color-mix(in srgb, var(--user-primary) 20%, hsl(var(--background))) 0%,
+                hsl(var(--background)) 100%);
+    }
+
+    .navbar {
+        border-bottom: 1px solid hsl(var(--border) / 0.3);
+        background: hsla(var(--background), 0.8);
+        backdrop-filter: blur(12px);
+    }
+
+    .navbar .logo {
+        color: hsl(var(--foreground));
+        opacity: 1;
+    }
+
+    .container {
+        max-width: 600px;
+    }
+
+    .profile-username {
+        color: hsl(var(--foreground));
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.05em;
+    }
+
+    .profile-tagline {
+        color: hsl(var(--muted-foreground));
+        font-size: 0.95rem;
+        margin-bottom: 3rem;
+        font-weight: 500;
+    }
+
+    .public-link-card {
+        background: hsl(var(--card));
+        color: hsl(var(--foreground));
+        border: 2px solid hsl(var(--border));
+        border-radius: calc(var(--radius) * 2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        min-height: 70px;
+    }
+
+    .public-link-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, var(--user-primary), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 0;
+    }
+
+    .public-link-card:hover::before {
+        opacity: 0.15;
+    }
+
+    .public-link-card:hover {
+        border-color: var(--user-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--user-primary);
+    }
+
+    .public-link-card .icon-wrapper {
+        flex-shrink: 0;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: hsl(var(--muted));
+        border-radius: calc(var(--radius) * 1.5);
+        color: hsl(var(--muted-foreground));
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+
+    .public-link-card:hover .icon-wrapper {
+        background: var(--user-primary);
+        color: #ffffff;
+        transform: scale(1.1);
+    }
+
+    .public-link-card .link-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        z-index: 1;
+    }
+
+    .public-link-card .link-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: hsl(var(--foreground));
+        transition: color 0.3s ease;
+    }
+
+    .public-link-card:hover .link-title {
+        color: var(--user-primary);
+    }
+
+    .public-link-card .link-description {
+        font-size: 0.875rem;
+        color: hsl(var(--muted-foreground));
+        line-height: 1.4;
+    }
+
+    .profile-avatar {
+        background: var(--user-primary);
+        color: #ffffff;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer-branding {
+        margin-top: 6rem;
+        padding-bottom: 4rem;
+        text-align: center;
+    }
+
+    .footer-branding a {
+        text-decoration: none;
+        font-weight: 800;
+        color: hsl(var(--foreground));
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .footer-branding a:hover {
+        opacity: 1;
+    }
+
+    .footer-branding .brand-name {
+        letter-spacing: -0.05em;
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: hsl(var(--foreground));
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container" style="margin-top: 2rem;">
+    <div class="profile-avatar" style="width: 110px; height: 110px; font-size: 2.5rem;">
+        {{ profile_user.username|slice:":1"|upper }}
+    </div>
+    <h1 class="profile-username">@{{ profile_user.username }}</h1>
+    <p class="profile-tagline">Digital Presence</p>
+
+    <div class="public-links">
+        {% for link in links %}
+        <a href="{{ link.url }}" target="_blank" class="public-link-card">
+            <div class="icon-wrapper">
+                <i data-lucide="{{ link.icon_name }}" style="width: 22px; height: 22px;"></i>
+            </div>
+            <div class="link-content">
+                <span class="link-title">{{ link.title }}</span>
+                {% if link.description %}
+                <span class="link-description">{{ link.description }}</span>
+                {% endif %}
+            </div>
+        </a>
+        {% empty %}
+        <div class="card" style="border-style: dashed; background: rgba(255,255,255,0.1); backdrop-filter: blur(4px);">
+            <p style="color: hsl(var(--muted-foreground));">Nenhum link público disponível.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="footer-branding">
+        <a href="{% url 'home' %}">
+            <span>Criado com</span>
+            <span class="brand-name">Liiink</span>
+        </a>
+    </div>
+</div>
+{% endblock %}
