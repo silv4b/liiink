@@ -101,7 +101,8 @@ body {
 }
 
 .nav-links a,
-.nav-links button {
+.nav-links button,
+.nav-links a:not(.btn) {
     font-size: 0.875rem;
     font-weight: 500;
     color: hsl(var(--user-primary));
@@ -129,12 +130,14 @@ body {
 }
 
 .btn-primary {
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    border: none;
 }
 
 .btn-primary:hover {
     opacity: 0.9;
+    filter: brightness(1.1);
 }
 
 .btn-secondary {
@@ -269,8 +272,6 @@ body {
 .public-link-card {
     display: block;
     width: 100%;
-    padding: 1rem;
-    margin-bottom: 1rem;
     text-decoration: none;
     color: hsl(var(--foreground));
     border: 1px solid hsl(var(--border));
