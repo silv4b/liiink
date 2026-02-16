@@ -10,6 +10,7 @@ dependencies = [
     "django-allauth>=65.14.3",
     "django-browser-reload>=1.21.0",
     "django-watchfiles>=1.4.0",
+    "gunicorn>=25.1.0",
     "poethepoet>=0.41.0",
     "psycopg>=3.3.2",
     "psycopg2-binary>=2.9.11",
@@ -18,6 +19,7 @@ dependencies = [
     "pytest-django>=4.12.0",
     "pytest-watch>=4.2.0",
     "python-dotenv>=1.2.1",
+    "uvicorn>=0.30.1",
 ]
 
 [tool.poe.tasks]
