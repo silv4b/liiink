@@ -40,11 +40,26 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: "liiink_user"
+      POSTGRES_DB: liiink_database
+      POSTGRES_USER: liiink_user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: "liiink_database"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+
+  liiink:
+    image: liiink-docker-image:latest
+    container_name: liiink-docker-container
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres14
+    environment:
+      DB_NAME: liiink_database
+      DB_USER: liiink_user
+      DB_PASSWORD: password
+      DB_HOST: 172.17.0.1
+      DB_PORT: 5432
 ```
 
 Para iniciar o banco de dados:
