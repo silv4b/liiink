@@ -18,8 +18,13 @@ COPY . .
 
 RUN python manage.py collectstatic --noinput
 
+# Configurando o entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--worker-class", "uvicorn.workers.UvicornWorker", "core.asgi:application"]
+ENTRYPOINT ["/entrypoint.sh"]
 
-# docker build -t liiink-docker-image .
+# Agora em JSON form para respeitar os sinais do SO
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--worker-class", "uvicorn.workers.UvicornWorker", "core.asgi:application"]
