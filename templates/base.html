@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-br" data-theme="light">
 
@@ -31,7 +32,12 @@
     <nav class="navbar">
         <div class="container">
             <a href="/" class="flex items-center gap-2 logo justify-center">Liiink</a>
-            <div class="nav-links">
+
+            <button class="navbar-toggle" onclick="toggleMenu()" aria-label="Toggle Navigation">
+                <i data-lucide="menu"></i>
+            </button>
+
+            <div class="nav-links" id="nav-links">
                 <button onclick="toggleTheme()" class="theme-toggle">
                     <i id="theme-icon" data-lucide="moon" style="width: 20px; height: 20px"></i>
                 </button>
@@ -167,7 +173,7 @@
             );
         }
 
-        function toggleTheme() {
+            function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute("data-theme");
             const newTheme = currentTheme === "light" ? "dark" : "light";
@@ -180,6 +186,26 @@
                     newTheme === "dark" ? "sun" : "moon",
                 );
                 lucide.createIcons();
+            }
+        }
+
+        function toggleMenu() {
+            const navLinks = document.getElementById('nav-links');
+            const isClosing = navLinks.classList.contains('closing');
+            const isActive = navLinks.classList.contains('active');
+
+            if (isClosing) {
+                navLinks.classList.remove('closing');
+            } else if (isActive) {
+                navLinks.classList.add('closing');
+                navLinks.addEventListener('animationend', function onEnd() {
+                    if (navLinks.classList.contains('closing')) {
+                        navLinks.classList.remove('active');
+                        navLinks.classList.remove('closing');
+                    }
+                }, { once: true });
+            } else {
+                navLinks.classList.add('active');
             }
         }
     </script>

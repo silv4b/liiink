@@ -408,3 +408,131 @@ body {
     background-color: hsl(var(--background));
     /* Garante fundo sólido */
 }
+
+/* Responsive Design */
+/* Navbar Toggle Button */
+.navbar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: hsl(var(--foreground));
+    padding: 0.5rem;
+}
+
+.navbar-toggle:hover {
+    color: hsl(var(--primary));
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+}
+
+@media (max-width: 768px) {
+
+    /* Navbar Mobile */
+    .navbar-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 3.5rem;
+        /* Navbar height */
+        left: 0;
+        width: 100%;
+        background-color: hsl(var(--background));
+        border-bottom: 1px solid hsl(var(--border));
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        z-index: 49;
+        /* Below navbar (50) */
+    }
+
+    .nav-links.active {
+        display: flex;
+        animation: slideDown 0.3s ease-out forwards;
+    }
+
+    .nav-links.closing {
+        display: flex !important;
+        /* Force display flex during animation */
+        animation: slideUp 0.3s ease-in forwards;
+    }
+
+    .nav-links a,
+    .nav-links button {
+        width: 100%;
+        text-align: left;
+        padding: 0.5rem 0;
+    }
+
+    .nav-links .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* General Layout Adjustments */
+    .container {
+        padding: 0 1rem;
+    }
+
+    /* Dashboard Adjustments */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .link-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .link-item>div {
+        width: 100%;
+    }
+
+    .link-item .btn-group {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        gap: 0.5rem;
+    }
+
+    /* Profile Container Adjustments */
+    .profile-container {
+        margin: 2rem auto !important;
+        width: 90%;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
