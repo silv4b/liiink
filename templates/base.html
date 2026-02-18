@@ -37,6 +37,7 @@
                 </button>
                 {% if user.is_authenticated %}
                 <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'profile' %}">Perfil</a>
                 <a href="{% url 'public_profile' user.username %}" target="blank_">Meu Perfil</a>
 
                 <button type="button" class="btn btn-ghost" style="padding: 0.5rem; color: hsl(var(--destructive))"
@@ -183,6 +184,86 @@
         }
     </script>
     {% block extra_js %}{% endblock %}
+
+    <script>
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '<i data-lucide="eye-off" style="width: 18px; height: 18px;"></i>';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '<i data-lucide="eye" style="width: 18px; height: 18px;"></i>';
+            }
+            lucide.createIcons();
+        }
+
+        function addPasswordToggle(inputId, container) {
+            const input = document.getElementById(inputId);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.style.cssText = 'position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: hsl(var(--muted-foreground)); padding: 4px;';
+            btn.innerHTML = '<i data-lucide="eye" style="width: 18px; height: 18px;"></i>';
+            btn.onclick = () => togglePassword(inputId, btn);
+            container.style.position = 'relative';
+            container.appendChild(btn);
+            lucide.createIcons();
+        }
+
+        function checkStrength(password) {
+            let strength = 0;
+            let bar = document.querySelector('#strength-bar');
+            let text = document.querySelector('#strength-text');
+
+            if (!bar || !text) return;
+
+            if (password.length > 7) strength += 25;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 25;
+            if (password.match(/[0-9]/)) strength += 25;
+            if (password.match(/[^a-zA-Z0-9]/)) strength += 25;
+
+            bar.style.width = strength + '%';
+
+            if (strength === 0) {
+                bar.style.background = 'hsl(var(--secondary))';
+                text.innerText = 'Força da senha';
+            } else if (strength <= 25) {
+                bar.style.background = 'hsl(0 84.2% 60.2%)';
+                text.innerText = 'Muito fraca';
+            } else if (strength <= 50) {
+                bar.style.background = 'hsl(38 92% 50%)';
+                text.innerText = 'Fraca';
+            } else if (strength <= 75) {
+                bar.style.background = 'hsl(221.2 83.2% 53.3%)';
+                text.innerText = 'Boa';
+            } else {
+                bar.style.background = 'hsl(142.1 76.2% 36.3%)';
+                text.innerText = 'Excelente';
+            }
+        }
+
+        function checkPasswordMatch(password1Id, password2Id, feedbackId) {
+            const p1 = document.getElementById(password1Id);
+            const p2 = document.getElementById(password2Id);
+            const feedback = document.getElementById(feedbackId);
+
+            if (!p1 || !p2 || !feedback) return;
+
+            if (p2.value.length === 0) {
+                feedback.innerText = '';
+                feedback.style.color = 'hsl(var(--muted-foreground))';
+                return;
+            }
+
+            if (p1.value === p2.value) {
+                feedback.innerText = 'As senhas coincidem';
+                feedback.style.color = 'hsl(142.1 76.2% 36.3%)';
+            } else {
+                feedback.innerText = 'As senhas não coincidem';
+                feedback.style.color = 'hsl(0 84.2% 60.2%)';
+            }
+        }
+    </script>
 </body>
 
 </html>

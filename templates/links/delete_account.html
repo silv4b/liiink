@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Excluir Conta - Liiink{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 2rem auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="width: 48px; height: 48px; background: hsl(var(--destructive) / 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--destructive))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+            </div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em;">Excluir Conta</h1>
+            <p style="color: hsl(var(--muted-foreground)); font-size: 0.875rem; margin-top: 0.5rem;">
+                Esta ação é irreversível. Todos os seus dados serão excluídos permanentemente.
+            </p>
+        </div>
+
+        <form method="post" action="{% url 'delete_account' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label" for="id_password">Digite sua senha para confirmar</label>
+                <input type="password" name="password" id="id_password" class="form-control" required autofocus>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                <a href="{% url 'profile' %}" class="btn btn-outline" style="flex: 1;">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn" style="flex: 1; background: hsl(var(--destructive)); color: white;">
+                    Excluir Conta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

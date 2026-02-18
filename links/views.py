@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from .models import Link, Profile
 from django.contrib import messages
 from django.http import JsonResponse
@@ -97,9 +98,28 @@ def public_profile(request, username):
 
 
 @login_required
+def profile(request):
+    profile_obj, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        primary_color = request.POST.get("primary_color")
+        theme_preference = request.POST.get("theme_preference")
+
+        if primary_color:
+            profile_obj.primary_color = primary_color
+        if theme_preference in ["light", "dark", "system"]:
+            profile_obj.theme_preference = theme_preference
+
+        profile_obj.save()
+        messages.success(request, "Perfil atualizado com sucesso!")
+        return redirect("profile")
+
+    return render(request, "links/profile.html", {"profile": profile_obj})
+
+
+@login_required
 @require_POST
 def set_theme_preference(request):
-    """Save user's theme preference to the database"""
     import json
 
     try:
@@ -118,3 +138,41 @@ def set_theme_preference(request):
         return JsonResponse({"success": True, "theme": theme})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+from django.http import JsonResponse
+
+
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        password = request.POST.get("password")
+
+        if not password:
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {"success": False, "error": "Por favor, insira sua senha."},
+                    status=400,
+                )
+            messages.error(request, "Por favor, insira sua senha.")
+            return redirect("profile")
+
+        user = authenticate(username=request.user.username, password=password)
+
+        if user is None:
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {"success": False, "error": "Senha incorreta."}, status=400
+                )
+            messages.error(request, "Senha incorreta.")
+            return redirect("profile")
+
+        user.delete()
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse(
+                {"success": True, "message": "Conta excluída com sucesso."}
+            )
+        messages.success(request, "Conta excluída com sucesso.")
+        return redirect("home")
+
+    return render(request, "links/delete_account.html")
