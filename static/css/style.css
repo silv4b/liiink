@@ -176,6 +176,27 @@ body {
 }
 
 /* Cards */
+.cards-container {
+    display: grid;
+    gap: 1rem;
+    margin-top: 6rem;
+    grid-template-columns: 1fr;
+}
+
+/* Para telas de Tablet (ex: acima de 600px) - 2 colunas */
+@media (min-width: 600px) {
+    .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Para telas de Desktop (ex: acima de 1024px) - 4 colunas */
+@media (min-width: 1024px) {
+    .cards-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
 .card {
     background-color: hsl(var(--card));
     color: hsl(var(--card-foreground));
