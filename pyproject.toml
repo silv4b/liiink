@@ -19,13 +19,13 @@ dependencies = [
 # Django tasks
 runserver = "python manage.py runserver"
 migrate = { shell = "python manage.py makemigrations && python manage.py migrate" }
+static = { shell = "python manage.py collectstatic --noinput" }
 
 # Test Tasks
 pytest = { shell = "pytest" }
 coverage = { shell = "coverage run -m pytest" }
 report = { shell = "coverage report" }
 coveragehtml = { shell = "coverage html" }
-static = { shell = "python manage.py collectstatic --noinput" }
 
 [tool.poe.tasks.server]
 sequence = ["runserver"]
@@ -38,9 +38,13 @@ dev = [
     "coverage>=7.13.4",
     "django-browser-reload>=1.21.0",
     "django-watchfiles>=1.4.0",
+    "dotenv>=0.9.9",
+    "factory-boy>=3.3.3",
     "poethepoet>=0.41.0",
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
     "pytest-django>=4.12.0",
     "pytest-watch>=4.2.0",
 ]
+
+# Add ao Dockerfile: RUN uv sync --frozen --no-dev
