@@ -178,6 +178,10 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 1
 
+# Email settings (console for development)
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_DEFAULT_FROM = "noreply@liiink.com"
+
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "account_login"
 
